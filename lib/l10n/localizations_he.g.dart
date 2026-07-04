@@ -24,37 +24,39 @@ class L10nHe extends L10n {
   String get habitEdit_colorPicker_title => 'נא לבחור צבע';
 
   @override
-  String get habitEdit_colorPicker_historySectionLabel => 'Recently used';
+  String get habitEdit_colorPicker_historySectionLabel => 'בשימוש לאחרונה';
 
   @override
   String habitEdit_colorPicker_customSectionLabel(String tinted) {
     String _temp0 = intl.Intl.selectLogic(tinted, {
-      'true': 'Custom (Tinted)',
-      'false': 'Custom',
-      'other': 'Custom',
+      'true': 'מותאם אישית (משתנה לפי גון ערכת הנושא)',
+      'false': 'מותאם אישית',
+      'other': 'מותאם אישית',
     });
     return '$_temp0';
   }
 
   @override
-  String get habitEdit_colorPicker_cancel => 'Cancel';
+  String get habitEdit_colorPicker_cancel => 'ביטול';
 
   @override
-  String get habitEdit_colorPicker_tintToggleLabel => 'Tint to theme';
+  String get habitEdit_colorPicker_tintToggleLabel =>
+      'התאמה אישית לגון ערכת הנושא';
 
   @override
-  String get habitEdit_colorPicker_tintedLabel => 'Tinted';
+  String get habitEdit_colorPicker_tintedLabel => 'משתנה לפי גון ערכת הנושא';
 
   @override
-  String get habitEdit_colorPicker_untintedLabel => 'Not tinted';
+  String get habitEdit_colorPicker_untintedLabel =>
+      'לא משתנה לפי גון ערכת הנושא';
 
   @override
   String get habitEdit_colorPicker_tintToggleOnHint =>
-      'Tinting may shift the final color away from the one you picked.';
+      'התאמת הגוון עלולה לגרום לצבע הסופי להיות שונה מזה שבחרת.';
 
   @override
   String get habitEdit_colorPicker_tintToggleOffHint =>
-      'Some colors may reduce text readability in light or dark theme.';
+      'קריאות צבעים מסוימים עשויים להפחית את קריאוּת הטקסט בסגנון הבהיר או הכהה.';
 
   @override
   String get habitEdit_habitTypeDialog_title => 'סוג הרגל';
@@ -1543,7 +1545,7 @@ class L10nHe extends L10n {
   String get common_habitColorType_cc10 => 'ורוד כהה';
 
   @override
-  String get common_habitColorType_custom => 'Custom';
+  String get common_habitColorType_custom => 'מותאם אישית';
 
   @override
   String common_habitColorType_default(int index) {
