@@ -172,4 +172,73 @@ Second paragraph.
       expect(result, contains('- Item two'));
     });
   });
+  group('extractVersionSectionWithFallback', () {
+    // 12: Stable code version → beta CHANGELOG heading
+    //     (e.g. PackageInfo reports "1.25.4+169" but CHANGELOG has "1.25.4+169-pre")
+    test('matches beta heading from stable code version', () {
+      const content = '''
+## 1.25.4+169-pre
+
+- Pre-release feature A
+- Pre-release feature B
+
+## 1.25.3+168
+
+- Stable release
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.4+169');
+      expect(result, isNotNull);
+      expect(result!, contains('- Pre-release feature A'));
+      expect(result, contains('- Pre-release feature B'));
+      expect(result, isNot(contains('- Stable release')));
+    });
+
+    // 13: Beta code version → stable CHANGELOG heading
+    //     (e.g. flavor suffix "-dev" stripped to match base version)
+    test('matches stable heading from beta code version', () {
+      const content = '''
+## 1.25.4+169
+
+- Stable feature
+
+## 1.25.3+168
+
+- Older release
+''';
+      final result = extractVersionSectionWithFallback(
+        content,
+        '1.25.4-dev+169',
+      );
+      expect(result, isNotNull);
+      expect(result!, contains('- Stable feature'));
+    });
+
+    // 14: Exact match still works
+    test('exact match preferred over fallback', () {
+      const content = '''
+## 1.25.4+169
+
+- Exact match content
+
+## 1.25.4+169-pre
+
+- Pre-release content
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.4+169');
+      expect(result, isNotNull);
+      expect(result!, contains('- Exact match content'));
+      expect(result, isNot(contains('- Pre-release content')));
+    });
+
+    // 15: No match returns null
+    test('returns null when no heading matches', () {
+      const content = '''
+## 1.25.3+168
+
+- Only old version
+''';
+      final result = extractVersionSectionWithFallback(content, '1.25.4+169');
+      expect(result, isNull);
+    });
+  });
 }

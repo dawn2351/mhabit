@@ -47,17 +47,59 @@ Future<String?> loadChangelogForVersion(
   return extractVersionSectionWithFallback(content, version);
 }
 
-/// Like [extractVersionSection], but if the exact [version] is not found,
-/// strips flavor suffixes (`-dev`, `-alpha`, etc.) and retries.
-///
-/// This is the pre-loaded-content variant of [loadChangelogForVersion], for
-/// callers that already hold the raw changelog text.
+// Splits e.g. "1.25.4+169-pre" → (base: "1.25.4+169", suffix: "pre")
+// or "1.25.4-dev+169" → (base: "1.25.4+169", suffix: "dev").
+// Always produces a stable base of the form "<semver>+<buildNumber>".
+({String base, String? suffix}) _splitVersion(String version) {
+  final plusIdx = version.indexOf('+');
+  if (plusIdx == -1) return (base: version, suffix: null);
+
+  // Suffix after build number: "1.25.4+169-pre"
+  final dashAfterPlus = version.indexOf('-', plusIdx);
+  if (dashAfterPlus != -1) {
+    return (
+      base: version.substring(0, dashAfterPlus),
+      suffix: version.substring(dashAfterPlus + 1),
+    );
+  }
+
+  // Suffix between semver and build number: "1.25.4-dev+169"
+  final dashBeforePlus = version.lastIndexOf('-', plusIdx);
+  if (dashBeforePlus != -1) {
+    return (
+      base:
+          '${version.substring(0, dashBeforePlus)}${version.substring(plusIdx)}',
+      suffix: version.substring(dashBeforePlus + 1, plusIdx),
+    );
+  }
+
+  return (base: version, suffix: null);
+}
+
+/// Like [extractVersionSection], but with fallback: strips flavor suffix
+/// from the code version, or matches CHANGELOG headings that share the same
+/// base with a different `-suffix`.
 String? extractVersionSectionWithFallback(String content, String version) {
+  // 1. Exact match.
   final section = extractVersionSection(content, version);
   if (section != null) return section;
-  final baseVersion = version.replaceFirst(RegExp(r'-\w+\+'), '+');
-  if (baseVersion == version) return null;
-  return extractVersionSection(content, baseVersion);
+
+  final (:base, :suffix) = _splitVersion(version);
+
+  return switch (suffix) {
+    final _? =>
+      extractVersionSection(content, base) ?? _tryBetaHeading(content, base),
+    _ => _tryBetaHeading(content, base),
+  };
+}
+
+// Looks for a CHANGELOG h2 heading that starts with [base]-.
+String? _tryBetaHeading(String content, String base) {
+  final m = RegExp(
+    '^## +(${RegExp.escape(base)}-\\w+)',
+    multiLine: true,
+  ).firstMatch(content);
+  return m != null ? extractVersionSection(content, m.group(1)!) : null;
 }
 
 /// Strips the preamble (title, links) from raw CHANGELOG.md [content],
