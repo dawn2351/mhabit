@@ -1,0 +1,3 @@
+- Feature: implement adaptive content sheets and enhance dialog localization (#613)
+- Feature: preserve unknown sync fields across habit round-trips for forward compatibility (#614)
+- Fix: changelog version matching not handling pre-release suffix in CHANGELOG headings

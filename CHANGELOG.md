@@ -2,6 +2,12 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.25.5+170-pre
+
+- Feature: implement adaptive content sheets and enhance dialog localization (#613)
+- Feature: preserve unknown sync fields across habit round-trips for forward compatibility (#614)
+- Fix: changelog version matching not handling pre-release suffix in CHANGELOG headings
+
 ## 1.25.4+169-pre
 
 - Feature: import habits and records from Loop Habit Tracker (uhabit) CSV export (#612)
