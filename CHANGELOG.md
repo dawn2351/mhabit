@@ -2,6 +2,10 @@
 
 [中文](./docs/CHANGELOG/zh.md)
 
+## 1.25.6+171-pre
+
+- Fix: replace regex-based beta heading matching with AST prefix matching for improved reliability (#615)
+
 ## 1.25.5+170-pre
 
 - Feature: implement adaptive content sheets and enhance dialog localization (#613)
